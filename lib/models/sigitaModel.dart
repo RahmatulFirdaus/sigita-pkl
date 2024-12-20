@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class UpdatePhoneProfile {
   Future<String?> updatePhone(String id, String phone) async {
-    var url = Uri.parse("http://192.168.1.70:3000/api/updatePhone/$id");
+    var url = Uri.parse("http://192.168.1.80:3000/api/updatePhone/$id");
     var hasilResponse = await http.patch(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -20,7 +20,7 @@ class UpdatePhoneProfile {
 
 class UpdatePasswordProfile {
   Future<String?> updatePassword(String id, String password) async {
-    var url = Uri.parse("http://192.168.1.70:3000/api/updatePassword/$id");
+    var url = Uri.parse("http://192.168.1.80:3000/api/updatePassword/$id");
     var hasilResponse = await http.patch(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -51,7 +51,7 @@ class GetUser {
 
   static Future<GetUser> getUser() async {
     const storage = FlutterSecureStorage();
-    var url = Uri.parse("http://192.168.1.70:3000/api/identitas");
+    var url = Uri.parse("http://192.168.1.80:3000/api/identitas");
     var token = await storage.read(key: 'token');
     var hasilResponse = await http.get(url,
         headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'}
@@ -80,7 +80,7 @@ class LoginSigita {
   static Future<String?> login(String username, String password) async {
       const storage = FlutterSecureStorage();
       final response = await http.post(
-        Uri.parse('http://192.168.1.70:3000/api/login'),
+        Uri.parse('http://192.168.1.80:3000/api/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'username': username, 'password': password}),
       );
@@ -122,7 +122,7 @@ class GetSigita {
 
   // Mengambil data tanpa validasi
   static Future<List<GetSigita>> connApi(String id) async {
-    Uri url = Uri.parse("http://192.168.1.70:3000/api/getPostingan/$id");
+    Uri url = Uri.parse("http://192.168.1.80:3000/api/getPostingan/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var dataList = jsonData["data"] as List;
@@ -141,7 +141,7 @@ class GetSigita {
   }
 
   static Future<GetSigita> connApiDetail(String id) async {
-    Uri url = Uri.parse("http://192.168.1.70:3000/api/getPostinganDetail/$id");
+    Uri url = Uri.parse("http://192.168.1.80:3000/api/getPostinganDetail/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var user = jsonData["data"][0];
@@ -170,7 +170,7 @@ class PostSigita {
 
   static Future<PostSigita> postSigita(
       String idPostingan, String nama, String komentar) async {
-    Uri url = Uri.parse("http://192.168.1.70:3000/api/simpanKomentar");
+    Uri url = Uri.parse("http://192.168.1.80:3000/api/simpanKomentar");
     var hasilResponse = await http.post(
       url,
       body: {
@@ -194,7 +194,7 @@ class GetFile {
   GetFile({required this.pdf});
 
   static Future<GetFile> getFile(String id) async {
-    Uri url = Uri.parse("http://192.168.1.70:3000/api/getDownloadFile/$id");
+    Uri url = Uri.parse("http://192.168.1.80:3000/api/getDownloadFile/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var user = jsonData["data"];
@@ -212,7 +212,7 @@ class PermissionFile {
 
   static Future<PermissionFile> postDownload(
       String idPostingan, String nama) async {
-    Uri url = Uri.parse("http://192.168.1.70:3000/api/downloadModul");
+    Uri url = Uri.parse("http://192.168.1.80:3000/api/downloadModul");
     var hasilResponse = await http.post(
       url,
       body: {
@@ -234,7 +234,7 @@ class GetKategori {
   GetKategori({required this.kategori, required this.id});
 
   static Future<List<GetKategori>> getKategori() async {
-    Uri url = Uri.parse("http://192.168.1.70:3000/api/getKategori");
+    Uri url = Uri.parse("http://192.168.1.80:3000/api/getKategori");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var dataList = jsonData["data"] as List;
@@ -259,7 +259,7 @@ class GetKomentar {
   });
 
   static Future<List<GetKomentar>> getKomentar(String id) async {
-    Uri url = Uri.parse("http://192.168.1.70:3000/api/getKomentar/$id");
+    Uri url = Uri.parse("http://192.168.1.80:3000/api/getKomentar/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var dataList = jsonData["data"] as List;
@@ -281,7 +281,7 @@ class GetPesan {
   GetPesan({required this.pesan});
 
   static Future<GetPesan> getPesan(String id) async {
-    Uri url = Uri.parse("http://192.168.1.70:3000/api/getKomentar/$id");
+    Uri url = Uri.parse("http://192.168.1.80:3000/api/getKomentar/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var user = jsonData["pesan"];

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sigita_online/adminpage/edit_page/kategori.dart';
 import 'package:sigita_online/adminpage/tambah_page/tambah_kategori.dart';
+import 'package:sigita_online/adminpage/view_page/view_kategori.dart';
 import 'package:sigita_online/models/adminModel.dart';
 import 'package:open_file/open_file.dart';
 import 'package:pdf/pdf.dart';
@@ -378,6 +379,17 @@ class MyDataSource extends DataTableSource {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              IconButton(
+                icon: const Icon(Icons.remove_red_eye, color: Colors.yellow),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => KategoriDetailPage(categoryId: kategori.id),
+                    ),
+                  );
+                },
+              ),
               IconButton(
                 icon: const Icon(Icons.edit, color: Colors.blue),
                 onPressed: () {
