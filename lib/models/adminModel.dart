@@ -31,8 +31,8 @@ class GetPostinganKategoriDetail{
         tanggal: user['tanggal'].toString(),
         kategori: user['kategori'].toString(),
         idKategori: user['id_kategori'].toString(),
-        jumlahDownload: user['jumlahDownload'].toString(),
-        jumlahKomentar: user['jumlahKomentar'].toString(),
+        jumlahDownload: user['jumlah_download'].toString(),
+        jumlahKomentar: user['jumlah_komentar'].toString(),
       );  
     }).toList();
   }

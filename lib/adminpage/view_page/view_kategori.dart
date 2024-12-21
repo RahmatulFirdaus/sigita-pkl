@@ -1,6 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sigita_online/models/adminModel.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/pdf.dart';
+import 'package:open_file/open_file.dart';
+
 
 class KategoriDetailPage extends StatefulWidget {
   final String categoryId;
@@ -12,167 +20,385 @@ class KategoriDetailPage extends StatefulWidget {
 }
 
 class _KategoriDetailPageState extends State<KategoriDetailPage> {
-  late Future<List<GetPostinganKategoriDetail>> _postings;
+  List<GetPostinganKategoriDetail> dataRespon = [];
+  List<GetPostinganKategoriDetail> filteredDataRespon = [];
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _postings = GetPostinganKategoriDetail.getPostinganKategoriDetail(widget.categoryId);
+    GetPostinganKategoriDetail.getPostinganKategoriDetail(widget.categoryId).then((value) {
+      setState(() {
+        dataRespon = value;
+        filteredDataRespon = value;
+      });
+    });
+  }
+
+  void filterSearchResults(String query) {
+    setState(() {
+      filteredDataRespon = query.isEmpty
+          ? dataRespon
+          : dataRespon
+              .where((item) =>
+                  item.judul.toLowerCase().contains(query.toLowerCase()) ||
+                  item.deskripsi.toLowerCase().contains(query.toLowerCase()) ||
+                  item.kategori.toLowerCase().contains(query.toLowerCase()))
+              .toList();
+    });
+  }
+
+  String formatDate(String date) {
+    return DateFormat('dd MMM yyyy').format(DateTime.parse(date));
+  }
+
+  Future<void> generatePDF() async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(30),
+        build: (pw.Context context) {
+          return [
+            // Header
+            pw.Center(
+              child: pw.Text(
+                'Laporan Postingan per Kategori',
+                style: pw.TextStyle(
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ),
+            pw.SizedBox(height: 20),
+
+            // Table
+            pw.Table(
+              border: pw.TableBorder.all(
+                color: PdfColors.black,
+                width: 1,
+              ),
+              columnWidths: {
+                0: const pw.FlexColumnWidth(0.5),
+                1: const pw.FlexColumnWidth(2),
+                2: const pw.FlexColumnWidth(1),
+                3: const pw.FlexColumnWidth(3),
+                4: const pw.FlexColumnWidth(1),
+                5: const pw.FlexColumnWidth(1),
+              },
+              children: [
+                pw.TableRow(
+                  decoration: const pw.BoxDecoration(
+                    color: PdfColors.grey200,
+                  ),
+                  children: [
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(5),
+                      child: pw.Text(
+                        'No',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        textAlign: pw.TextAlign.center,
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(5),
+                      child: pw.Text(
+                        'Kategori',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(5),
+                      child: pw.Text(
+                        'Judul',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(5),
+                      child: pw.Text(
+                        'Deskripsi',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(5),
+                      child: pw.Text(
+                        'Jumlah\nDownload',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        textAlign: pw.TextAlign.center,
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(5),
+                      child: pw.Text(
+                        'Jumlah\nKomentar',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        textAlign: pw.TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Table Data
+                ...dataRespon.map((postingan) => pw.TableRow(
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text(
+                            (dataRespon.indexOf(postingan) + 1).toString(),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text(postingan.kategori),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text(postingan.file),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text(postingan.deskripsi),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text(
+                            postingan.jumlahDownload.toString(),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text(
+                            postingan.jumlahKomentar.toString(),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    )),
+              ],
+            ),
+          ];
+        },
+      ),
+    );
+
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File("${directory.path}/laporan_postingan.pdf");
+      await file.writeAsBytes(await pdf.save());
+      await OpenFile.open(file.path);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error generating PDF: ${e.toString()}')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        elevation: 0,
         backgroundColor: Colors.white,
-        title: const Text(
-          'Detail Kategori',
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text('Postingan Kategori', style: TextStyle(color: Colors.black)),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.white, Color.fromRGBO(202, 248, 253, 1)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: FutureBuilder<List<GetPostinganKategoriDetail>>(
-        future: _postings,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Tidak ada postingan'));
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              final post = snapshot.data![index];
-              return Card(
-                elevation: 2,
-                margin: const EdgeInsets.only(bottom: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+              child: TextField(
+                controller: searchController,
+                onChanged: filterSearchResults,
+                decoration: InputDecoration(
+                  hintText: "Cari Disini",
+                  hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                  prefixIcon: const Icon(Icons.search, size: 20),
+                  suffixIcon: const Icon(Icons.filter_list, size: 20),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Image Container
-                    Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                        image: DecorationImage(
-                          image: NetworkImage(post.file),
-                          fit: BoxFit.cover,
+              ),
+            ),
+            Expanded(
+              child: filteredDataRespon.isNotEmpty
+                  ? ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      itemCount: filteredDataRespon.length,
+                      itemBuilder: (context, index) =>
+                          _buildPostCard(filteredDataRespon[index]),
+                    )
+                  : Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.white, Color.fromRGBO(202, 248, 253, 1)],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                      child: Center(
+                        child: Container(
+                          width: 300,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.emoji_emotions, size: 70),
+                              SizedBox(height: 20),
+                              Text(
+                                "Maaf ya! Postingan Tidak Tersedia",
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Title
-                          Text(
-                            post.judul,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          
-                          // Category & Date
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue[100],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  post.kategori,
-                                  style: TextStyle(
-                                    color: Colors.blue[800],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                DateFormat('dd MMM yyyy').format(DateTime.parse(post.tanggal)),
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          
-                          // Description
-                          Text(
-                            post.deskripsi,
-                            style: TextStyle(
-                              color: Colors.grey[700],
-                              height: 1.5,
-                            ),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 16),
-                          
-                          // Stats Row
-                          Row(
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.download, size: 16, color: Colors.grey),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${post.jumlahDownload} Downloads',
-                                    style: TextStyle(color: Colors.grey[600]),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(width: 16),
-                              Row(
-                                children: [
-                                  const Icon(Icons.comment, size: 16, color: Colors.grey),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${post.jumlahKomentar} Comments',
-                                    style: TextStyle(color: Colors.grey[600]),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPostCard(GetPostinganKategoriDetail data) {
+    return Card(
+      color: Colors.white,
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+            child: Image.network(
+              data.file,
+              fit: BoxFit.cover,
+              height: 140,
+              width: double.infinity,
+              errorBuilder: (context, error, stackTrace) => Image.asset(
+                "images/redContent.png",
+                fit: BoxFit.cover,
+                height: 140,
+                width: double.infinity,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  data.judul,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  data.deskripsi,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(Icons.category_outlined, size: 14, color: Colors.grey[600]),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        data.kategori,
+                        style: GoogleFonts.poppins(
+                          fontSize: 11,
+                          color: Colors.grey[600],
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Icon(Icons.calendar_today_outlined, size: 14, color: Colors.grey[600]),
+                    const SizedBox(width: 4),
+                    Text(
+                      formatDate(data.tanggal),
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        color: Colors.grey[600],
                       ),
                     ),
                   ],
                 ),
-              );
-            },
-          );
-        },
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(Icons.download_outlined, size: 14, color: Colors.grey[600]),
+                    const SizedBox(width: 4),
+                    Text(
+                      data.jumlahDownload,
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Icon(Icons.comment_outlined, size: 14, color: Colors.grey[600]),
+                    const SizedBox(width: 4),
+                    Text(
+                      data.jumlahKomentar,
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
