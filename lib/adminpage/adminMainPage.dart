@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sigita_online/adminpage/linechart/linechart.dart';
 import 'package:sigita_online/models/adminModel.dart';
+import 'package:sigita_online/pages/login/login_page.dart';
 
 class Adminmainpage extends StatefulWidget {
   const Adminmainpage({super.key});
@@ -21,16 +22,22 @@ class _AdminmainpageState extends State<Adminmainpage> {
   }
 
   Future<void> fetchData() async {
+    if (!mounted) return; // Pastikan widget masih terpasang
     setState(() => isLoading = true);
+
     try {
       adminList = Adminmodel.getAdminModel();
       final totalPostinganInit = await GetTotalPostingan.getTotalPostingan();
+
+      if (!mounted) return; // Cek ulang sebelum memanggil setState
       setState(() {
         totalPostingan = totalPostinganInit;
         isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return; // Cek ulang sebelum memanggil setState
       setState(() => isLoading = false);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: ${e.toString()}'),
@@ -304,9 +311,14 @@ class _AdminmainpageState extends State<Adminmainpage> {
   Widget _buildRefreshButton() {
     return FloatingActionButton(
       backgroundColor: Colors.blue[900],
-      onPressed: fetchData,
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      },
       child: const Icon(
-        Icons.refresh_rounded,
+        Icons.logout_outlined,
         color: Colors.white,
       ),
     );

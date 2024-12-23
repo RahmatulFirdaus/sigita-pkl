@@ -39,11 +39,11 @@ class GetPostinganKategoriDetail{
 }
 
 class GetViewDownload{
-  String nama;
+  String nama, tanggal, kodePerawat, phone;
 
-  GetViewDownload({required this.nama});
+  GetViewDownload({required this.nama, required this.tanggal, required this.kodePerawat, required this.phone});
 
-  Future<List<GetViewDownload>> getViewDownload(String id) async{
+  static Future<List<GetViewDownload>> getViewDownload(String id) async{
     var url = Uri.parse("http://192.168.1.80:3000/api/getViewDownload/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
@@ -51,6 +51,9 @@ class GetViewDownload{
     return dataList.map((user) {
       return GetViewDownload(
         nama: user['nama'].toString(),
+        tanggal: user['tanggal'].toString(),
+        kodePerawat: user['kode_perawat'].toString(),
+        phone: user['phone'].toString(),
       );  
     }).toList();
   }

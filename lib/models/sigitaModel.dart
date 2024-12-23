@@ -160,29 +160,29 @@ class GetSigita {
 
 class PostSigita {
   String idPostingan;
-  String nama, komentar;
+  String idIdentitas, komentar;
 
   PostSigita({
     required this.idPostingan,
-    required this.nama,
+    required this.idIdentitas,
     required this.komentar,
   });
 
   static Future<PostSigita> postSigita(
-      String idPostingan, String nama, String komentar) async {
+      String idPostingan, String idIdentitas, String komentar) async {
     Uri url = Uri.parse("http://192.168.1.80:3000/api/simpanKomentar");
     var hasilResponse = await http.post(
       url,
       body: {
         "id_postingan": idPostingan,
-        "nama": nama,
+        "id_identitas": idIdentitas,
         "komentar": komentar,
       },
     );
     var jsonData = jsonDecode(hasilResponse.body);
     return PostSigita(
       idPostingan: jsonData['id_postingan'].toString(),
-      nama: jsonData['nama'].toString(),
+      idIdentitas: jsonData['id_identitas'].toString(),
       komentar: jsonData['komentar'].toString(),
     );
   }
@@ -203,27 +203,27 @@ class GetFile {
 }
 
 class PermissionFile {
-  String idPostingan, nama;
+  String idPostingan, idIdentitas;
 
   PermissionFile({
     required this.idPostingan,
-    required this.nama,
+    required this.idIdentitas
   });
 
   static Future<PermissionFile> postDownload(
-      String idPostingan, String nama) async {
+      String idPostingan, String idIdentitas) async {
     Uri url = Uri.parse("http://192.168.1.80:3000/api/downloadModul");
     var hasilResponse = await http.post(
       url,
       body: {
         "id_postingan": idPostingan,
-        "nama": nama,
+        "id_identitas": idIdentitas,
       },
     );
     var jsonData = jsonDecode(hasilResponse.body);
     return PermissionFile(
       idPostingan: jsonData['id_postingan'].toString(),
-      nama: jsonData['nama'].toString(),
+      idIdentitas: jsonData['id_identitas'].toString(),
     );
   }
 }

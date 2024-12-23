@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:open_file/open_file.dart';
+import 'package:intl/intl.dart';
 
 import 'package:sigita_online/models/adminModel.dart'; // Adjust import as needed
 
@@ -19,7 +20,7 @@ class ViewDownload extends StatefulWidget {
 }
 
 class _ViewDownloadState extends State<ViewDownload> {
-  final GetViewDownload downloadList = GetViewDownload(nama: "");
+  List<GetViewDownload> downloads = [];
   bool _isExporting = false;
 
   // Function to generate a color based on nama
@@ -31,6 +32,10 @@ class _ViewDownloadState extends State<ViewDownload> {
       hash & 0x0000FF,
       0.7,
     );
+  }
+
+  String formatDate(String date) {
+    return DateFormat('dd MMM yyyy HH:mm').format(DateTime.parse(date));
   }
 
   // PDF Export Function
@@ -75,7 +80,28 @@ class _ViewDownloadState extends State<ViewDownload> {
                     pw.Padding(
                       padding: const pw.EdgeInsets.all(8),
                       child: pw.Text(
-                        'nama',
+                        'Nama',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text(
+                        'Kode Perawat',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text(
+                        'Phone',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text(
+                        'Tanggal Download',
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                       ),
                     ),
@@ -96,10 +122,22 @@ class _ViewDownloadState extends State<ViewDownload> {
                           padding: const pw.EdgeInsets.all(8),
                           child: pw.Text(download.nama),
                         ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(download.kodePerawat),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(download.phone),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(formatDate(download.tanggal)),
+                        ),
                       ],
                     );
                   },
-                ),
+                )
               ],
             ),
           ],
@@ -146,13 +184,13 @@ class _ViewDownloadState extends State<ViewDownload> {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: const Color(0xFF1E1E2A),
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text(
             'Riwayat Download',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Colors.black,
               letterSpacing: 1.2,
             ),
           ),
@@ -161,10 +199,11 @@ class _ViewDownloadState extends State<ViewDownload> {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+              icon: const Icon(Icons.picture_as_pdf, color: Colors.black),
               onPressed: () async {
                 // Fetch downloads and export to PDF
-                final downloads = await downloadList.getViewDownload(widget.id);
+                final downloads =
+                    await GetViewDownload.getViewDownload(widget.id);
                 if (downloads.isNotEmpty) {
                   _exportToPdf(downloads);
                 } else {
@@ -180,7 +219,7 @@ class _ViewDownloadState extends State<ViewDownload> {
           ],
         ),
         body: FutureBuilder<List<GetViewDownload>>(
-          future: downloadList.getViewDownload(widget.id),
+          future: GetViewDownload.getViewDownload(widget.id),
           builder: (context, snapshot) {
             if (_isExporting) {
               return const Center(
@@ -244,103 +283,94 @@ class _ViewDownloadState extends State<ViewDownload> {
             } else {
               final downloads = snapshot.data!;
               return ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.all(16),
                 itemCount: downloads.length,
                 itemBuilder: (context, index) {
                   final item = downloads[index];
-                  final userColor = _generateColorFromnama(item.nama);
 
                   return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFF2C2C3E).withOpacity(0.7),
-                          const Color(0xFF1E1E2A).withOpacity(0.9),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.1),
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 15,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
+                      // ignore: deprecated_member_use
+                      color: Colors.black.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.cyan.withOpacity(0.3)),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          right: -20,
+                          bottom: -20,
+                          child: Icon(
+                            Icons.download_rounded,
+                            size: 100,
+                            color: Colors.cyan.withOpacity(0.05),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Person Icon with Unique Color
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      userColor,
-                                      userColor.withOpacity(0.6),
-                                    ],
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: userColor.withOpacity(0.5),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
                                     ),
-                                  ],
-                                ),
-                                margin: const EdgeInsets.only(right: 16),
-                                child: const CircleAvatar(
-                                  backgroundColor: Colors.transparent,
-                                  child: Icon(
-                                    Icons.person_outline,
-                                    color: Colors.white,
-                                    size: 30,
-                                  ),
-                                ),
-                              ),
-
-                              // Download Details
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.nama,
+                                    decoration: BoxDecoration(
+                                      color: Colors.cyan.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      item.kodePerawat,
                                       style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
                                         color: Colors.cyan,
-                                        letterSpacing: 1.1,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ],
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    formatDate(item.tanggal),
+                                    style: TextStyle(
+                                      color: Colors.black.withOpacity(0.6),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                item.nama,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-
-                              // Download Icon
-                              const Icon(
-                                Icons.download_rounded,
-                                color: Colors.green,
-                                size: 30,
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.phone,
+                                    size: 16,
+                                    color: Colors.black.withOpacity(0.6),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    item.phone,
+                                    style: TextStyle(
+                                      color: Colors.black.withOpacity(0.6),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   );
                 },

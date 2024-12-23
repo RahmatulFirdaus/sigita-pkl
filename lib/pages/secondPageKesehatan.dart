@@ -15,8 +15,7 @@ class PageProposal extends StatefulWidget {
 
 class _PageProposalState extends State<PageProposal> {
   final TextEditingController _commentController = TextEditingController();
-  final TextEditingController _downloadnamaController =
-      TextEditingController();
+  final TextEditingController _downloadnamaController = TextEditingController();
 
   GetSigita dataRespon = GetSigita(
       id: "",
@@ -28,7 +27,8 @@ class _PageProposalState extends State<PageProposal> {
       jumlah: "",
       idKategori: "");
   GetFile dataFile = GetFile(pdf: "");
-  GetUser getUser = GetUser(id: "", userId: "", nama: "", kodePerawat: "", phone: "");
+  GetUser getUser =
+      GetUser(id: "", userId: "", nama: "", kodePerawat: "", phone: "");
   List<GetKomentar> dataKomentar = [];
 
   @override
@@ -56,27 +56,33 @@ class _PageProposalState extends State<PageProposal> {
   }
 
   void _submitComment() async {
-    if (_commentController.text.isEmpty) {
+    try {
+      if (_commentController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("nama dan Komentar harus diisi")),
+        );
+        return;
+      }
+
+      await PostSigita.postSigita(
+          widget.id, getUser.id, _commentController.text);
+
+      FocusScope.of(context).unfocus();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("nama dan Komentar harus diisi")),
+        const SnackBar(content: Text("Komentar Berhasil Dimasukkan")),
       );
-      return;
+
+      // Optional: Clear text fields after submission
+      _commentController.clear();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error saat menyimpan data: $e")),
+      );
     }
-
-    await PostSigita.postSigita(
-        dataRespon.id, getUser.nama, _commentController.text);
-
-    FocusScope.of(context).unfocus();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Komentar Berhasil Dimasukkan")),
-    );
-
-    // Optional: Clear text fields after submission
-    _commentController.clear();
   }
 
   void downloadPDF() async {
-    await PermissionFile.postDownload(widget.id, getUser.nama);
+    await PermissionFile.postDownload(widget.id, getUser.id);
     launchUrl(Uri.parse(dataFile.pdf));
   }
 
