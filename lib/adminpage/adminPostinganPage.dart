@@ -28,7 +28,9 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
     fetchData();
   }
 
-  
+  String formatDate(String date) {
+    return DateFormat('dd MMM yyyy HH:mm').format(DateTime.parse(date));
+  }
 
   Future<void> fetchData() async {
     setState(() => isLoading = true);
@@ -80,12 +82,13 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
                 width: 1,
               ),
               columnWidths: {
-                0: const pw.FlexColumnWidth(0.5),
-                1: const pw.FlexColumnWidth(2),
-                2: const pw.FlexColumnWidth(1),
+                0: const pw.FlexColumnWidth(1),
+                1: const pw.FlexColumnWidth(1.5),
+                2: const pw.FlexColumnWidth(0.8),
                 3: const pw.FlexColumnWidth(3),
-                4: const pw.FlexColumnWidth(1),
+                4: const pw.FlexColumnWidth(1.2),
                 5: const pw.FlexColumnWidth(1),
+                6: const pw.FlexColumnWidth(1),
               },
               children: [
                 pw.TableRow(
@@ -96,15 +99,14 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
                     pw.Padding(
                       padding: const pw.EdgeInsets.all(5),
                       child: pw.Text(
-                        'No',
+                        'Kategori',
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
-                        textAlign: pw.TextAlign.center,
                       ),
                     ),
                     pw.Padding(
                       padding: const pw.EdgeInsets.all(5),
                       child: pw.Text(
-                        'Kategori',
+                        'Postingan',
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                       ),
                     ),
@@ -119,6 +121,13 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
                       padding: const pw.EdgeInsets.all(5),
                       child: pw.Text(
                         'Deskripsi',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(5),
+                      child: pw.Text(
+                        'Tanggal',
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                       ),
                     ),
@@ -146,14 +155,11 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
-                          child: pw.Text(
-                            (getPostingan.indexOf(postingan) + 1).toString(),
-                            textAlign: pw.TextAlign.center,
-                          ),
+                          child: pw.Text(postingan.category),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
-                          child: pw.Text(postingan.category),
+                          child: pw.Text(postingan.title),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
@@ -162,6 +168,10 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
                           child: pw.Text(postingan.content),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text(formatDate(postingan.date)),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
