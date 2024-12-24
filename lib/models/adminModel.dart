@@ -60,11 +60,11 @@ class GetViewDownload{
 }
 
 class GetViewKomentar{
-  String  nama, komentar, tanggal;
+  String  nama, komentar, tanggal, kodePerawat, phone;
 
-  GetViewKomentar({required this.nama, required this.komentar, required this.tanggal});
+  GetViewKomentar({required this.nama, required this.komentar, required this.tanggal, required this.kodePerawat, required this.phone});
 
-  Future<List<GetViewKomentar>> getViewKomentar(String id) async{
+  static Future<List<GetViewKomentar>> getViewKomentar(String id) async{
     Uri url = Uri.parse("http://192.168.1.80:3000/api/getViewKomentar/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
@@ -74,6 +74,8 @@ class GetViewKomentar{
         nama: user['nama'].toString(),
         komentar: user['komentar'].toString(),
         tanggal: user['tanggal'].toString(),
+        kodePerawat: user['kode_perawat'].toString(),
+        phone: user['phone'].toString(),
       );
     }).toList();
   }

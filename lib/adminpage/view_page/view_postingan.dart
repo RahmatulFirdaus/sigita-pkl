@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui';
 import 'package:path_provider/path_provider.dart';
@@ -8,7 +9,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:open_file/open_file.dart';
 
-import 'package:sigita_online/models/adminModel.dart'; // Adjust import as needed
+import 'package:sigita_online/models/adminModel.dart';
+import 'package:sigita_online/models/sigitaModel.dart'; // Adjust import as needed
 
 class ViewPostinganPage extends StatefulWidget {
   final String id, judul;
@@ -19,8 +21,8 @@ class ViewPostinganPage extends StatefulWidget {
 }
 
 class _ViewPostinganPageState extends State<ViewPostinganPage> {
-  final GetViewKomentar komentarList =
-      GetViewKomentar(nama: "", komentar: "", tanggal: "");
+  List<GetViewKomentar> komentarList = [];
+  List<GetSigita> postinganList = [];
   bool _isExporting = false;
 
   // Function to generate a color based on nama
@@ -34,8 +36,15 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
     );
   }
 
+  void fetchData() async {
+    final ambilData = await GetSigita.connApi(widget.id);
+    setState(() {
+      postinganList = ambilData;
+    });
+  }
+
   String formatDate(String date) {
-    return DateFormat('dd MMM yyyy').format(DateTime.parse(date));
+    return DateFormat('dd MMM yyyy HH:mm').format(DateTime.parse(date));
   }
 
   // PDF Export Function
@@ -56,11 +65,25 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
             pw.Header(
               level: 0,
               child: pw.Text(
-                'Komentar Postingan: ${widget.judul}',
+                'Komentar Postingan: ${widget.judul} (${comments.length} Komentar)',
                 style: pw.TextStyle(
                   fontSize: 24,
                   fontWeight: pw.FontWeight.bold,
                 ),
+              ),
+            ),
+            pw.Text(
+              'Tanggal Postingan: ${formatDate(postinganList[0].date)}',
+              style: pw.TextStyle(
+                fontSize: 16,
+                color: PdfColors.grey,
+              ),
+            ),
+            pw.Text(
+              'Tanggal Laporan: ${DateFormat('dd MMM yyyy HH:mm').format(DateTime.now())}',
+              style: pw.TextStyle(
+                fontSize: 16,
+                color: PdfColors.grey,
               ),
             ),
             pw.SizedBox(height: 16), // Spasi tambahan antara header dan tabel
@@ -91,7 +114,7 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
                     pw.Padding(
                       padding: const pw.EdgeInsets.all(8),
                       child: pw.Text(
-                        'nama',
+                        'Nama',
                         textAlign: pw.TextAlign.center,
                         style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
@@ -101,7 +124,17 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
                     pw.Padding(
                       padding: const pw.EdgeInsets.all(8),
                       child: pw.Text(
-                        'Tanggal',
+                        'Kode Perawat',
+                        textAlign: pw.TextAlign.center,
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text(
+                        'No Telpon',
                         textAlign: pw.TextAlign.center,
                         style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
@@ -112,6 +145,16 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
                       padding: const pw.EdgeInsets.all(8),
                       child: pw.Text(
                         'Komentar',
+                        textAlign: pw.TextAlign.center,
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text(
+                        'Tanggal',
                         textAlign: pw.TextAlign.center,
                         style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
@@ -144,8 +187,15 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
                           child: pw.Text(
-                            formatDate(comment.tanggal),
-                            textAlign: pw.TextAlign.center,
+                            comment.kodePerawat,
+                            textAlign: pw.TextAlign.left,
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            comment.phone,
+                            textAlign: pw.TextAlign.left,
                           ),
                         ),
                         pw.Padding(
@@ -153,6 +203,13 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
                           child: pw.Text(
                             comment.komentar,
                             textAlign: pw.TextAlign.left,
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            formatDate(comment.tanggal),
+                            textAlign: pw.TextAlign.center,
                           ),
                         ),
                       ],
@@ -223,7 +280,7 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
               icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
               onPressed: () async {
                 // Fetch comments and export to PDF
-                final comments = await komentarList.getViewKomentar(widget.id);
+                final comments = await GetViewKomentar.getViewKomentar(widget.id);
                 if (comments.isNotEmpty) {
                   _exportToPdf(comments);
                 } else {
@@ -239,7 +296,7 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
           ],
         ),
         body: FutureBuilder<List<GetViewKomentar>>(
-          future: komentarList.getViewKomentar(widget.id),
+          future: GetViewKomentar.getViewKomentar(widget.id),
           builder: (context, snapshot) {
             if (_isExporting) {
               return const Center(
@@ -388,9 +445,22 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-
                                   Text(
-                                    item.tanggal,
+                                    item.kodePerawat,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    item.phone,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    formatDate(item.tanggal),
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey,

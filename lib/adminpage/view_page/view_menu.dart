@@ -79,7 +79,7 @@ class ViewMenu extends StatelessWidget {
                             context,
                             icon: Icons.download_rounded,
                             title: 'View Download',
-                            subtitle: 'Lihat file yang tersedia',
+                            subtitle: 'Lihat log download',
                             gradientColors: [
                               const Color(0xFF00B4DB),
                               const Color(0xFF0083B0),
@@ -101,7 +101,7 @@ class ViewMenu extends StatelessWidget {
                             context,
                             icon: Icons.comment_rounded,
                             title: 'View Komentar',
-                            subtitle: 'Baca komentar postingan',
+                            subtitle: 'Lihat log komentar postingan',
                             gradientColors: [
                               const Color(0xFFFF6B6B),
                               const Color(0xFFFF3366),

@@ -63,6 +63,14 @@ class _ViewDownloadState extends State<ViewDownload> {
                 ),
               ),
             ),
+            pw.Text(
+              'Tanggal Laporan: ${DateFormat('dd MMM yyyy HH:mm').format(DateTime.now())}',
+              style: pw.TextStyle(
+                fontSize: 16,
+                color: PdfColors.grey,
+              ),
+            ),
+            pw.SizedBox(height: 16), // Spasi tambahan antara header dan tabel
             pw.Table(
               border: pw.TableBorder.all(color: PdfColors.black),
               children: [
