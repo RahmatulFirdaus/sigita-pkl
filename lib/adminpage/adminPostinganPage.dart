@@ -8,6 +8,7 @@ import 'package:sigita_online/adminpage/view_page/view_menu.dart';
 import 'package:sigita_online/models/adminModel.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:intl/intl.dart';
 
 class Adminpostinganpage extends StatefulWidget {
   const Adminpostinganpage({super.key});
@@ -26,6 +27,8 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
     super.initState();
     fetchData();
   }
+
+  
 
   Future<void> fetchData() async {
     setState(() => isLoading = true);
@@ -361,6 +364,12 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
                             ),
                             DataColumn(
                               label: Text(
+                                "Tanggal",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
                                 "Aksi",
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
@@ -403,6 +412,10 @@ class MyDataSource extends DataTableSource {
     required this.context,
     required this.onRefresh,
   });
+
+  String formatDate(String date) {
+    return DateFormat('dd MMM yyyy HH:mm').format(DateTime.parse(date));
+  }
 
   @override
   DataRow? getRow(int index) {
@@ -468,6 +481,19 @@ class MyDataSource extends DataTableSource {
           ),
         ),
         DataCell(
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.orange[50],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              formatDate(postingan.date).toString(),
+              style: TextStyle(color: Colors.orange[700]),
+            ),
+          ),
+        ),
+        DataCell(
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -478,7 +504,10 @@ class MyDataSource extends DataTableSource {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ViewMenu(postId: postingan.id, judul: postingan.title,),
+                      builder: (context) => ViewMenu(
+                        postId: postingan.id,
+                        judul: postingan.title,
+                      ),
                     ),
                   );
                 },

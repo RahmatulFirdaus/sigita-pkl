@@ -232,7 +232,7 @@ class _ViewDownloadState extends State<ViewDownload> {
             if (_isExporting) {
               return const Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.cyan),
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
                 ),
               );
             }
@@ -240,7 +240,7 @@ class _ViewDownloadState extends State<ViewDownload> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.cyan),
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
                 ),
               );
             } else if (snapshot.hasError) {
@@ -302,7 +302,7 @@ class _ViewDownloadState extends State<ViewDownload> {
                       // ignore: deprecated_member_use
                       color: Colors.black.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.cyan.withOpacity(0.3)),
+                      border: Border.all(color: Colors.black.withOpacity(0.3)),
                     ),
                     child: Stack(
                       children: [
@@ -312,7 +312,7 @@ class _ViewDownloadState extends State<ViewDownload> {
                           child: Icon(
                             Icons.download_rounded,
                             size: 100,
-                            color: Colors.cyan.withOpacity(0.05),
+                            color: Colors.black.withOpacity(0.05),
                           ),
                         ),
                         Padding(
@@ -328,13 +328,13 @@ class _ViewDownloadState extends State<ViewDownload> {
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.cyan.withOpacity(0.1),
+                                      color: Colors.black.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(
                                       item.kodePerawat,
                                       style: const TextStyle(
-                                        color: Colors.cyan,
+                                        color: Colors.black,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),

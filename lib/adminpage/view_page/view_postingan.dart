@@ -22,22 +22,39 @@ class ViewPostinganPage extends StatefulWidget {
 
 class _ViewPostinganPageState extends State<ViewPostinganPage> {
   List<GetViewKomentar> komentarList = [];
-  List<GetSigita> postinganList = [];
+  GetSigita postinganList = GetSigita(
+    id: '',
+    title: '',
+    content: '',
+    date: '',
+    category: '',
+    jumlah: '',
+    file: '',
+    idKategori: '',
+  );
   bool _isExporting = false;
 
   // Function to generate a color based on nama
   Color _generateColorFromnama(String nama) {
-    int hash = nama.hashCode;
-    return Color.fromRGBO(
-      (hash & 0xFF0000) >> 16,
-      (hash & 0x00FF00) >> 8,
-      hash & 0x0000FF,
-      0.7,
-    );
+    final colors = [
+      const Color(0xFFFF6B6B),
+      const Color(0xFF4ECDC4),
+      const Color(0xFF45B7D1),
+      const Color(0xFF96CEB4),
+      const Color(0xFFFFEEAD),
+    ];
+    final index = nama.codeUnits.reduce((a, b) => a + b) % colors.length;
+    return colors[index];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
   }
 
   void fetchData() async {
-    final ambilData = await GetSigita.connApi(widget.id);
+    final ambilData = await GetSigita.connApiDetail(widget.id);
     setState(() {
       postinganList = ambilData;
     });
@@ -62,161 +79,165 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
         pw.MultiPage(
           pageFormat: PdfPageFormat.a4,
           build: (pw.Context context) => [
-            pw.Header(
-              level: 0,
-              child: pw.Text(
-                'Komentar Postingan: ${widget.judul} (${comments.length} Komentar)',
-                style: pw.TextStyle(
-                  fontSize: 24,
-                  fontWeight: pw.FontWeight.bold,
-                ),
+            pw.Container(
+              padding: const pw.EdgeInsets.all(16),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Header(
+                    level: 0,
+                    child: pw.Text(
+                      'Komentar Postingan: ${widget.judul} (${comments.length} Komentar)',
+                      style: pw.TextStyle(
+                        fontSize: 24,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  pw.SizedBox(height: 8),
+                  pw.Text(
+                    'Tanggal Postingan: ${formatDate(postinganList.date)}',
+                    style: pw.TextStyle(
+                      fontSize: 14,
+                      color: PdfColors.grey700,
+                    ),
+                  ),
+                  pw.Text(
+                    'Tanggal Laporan: ${DateFormat('dd MMM yyyy HH:mm').format(DateTime.now())}',
+                    style: pw.TextStyle(
+                      fontSize: 14,
+                      color: PdfColors.grey700,
+                    ),
+                  ),
+                  pw.SizedBox(height: 20),
+                  pw.Table(
+                    border: pw.TableBorder.all(
+                      color: PdfColors.grey600,
+                      width: 0.5,
+                    ),
+                    columnWidths: {
+                      0: const pw.FixedColumnWidth(40),
+                      1: const pw.FlexColumnWidth(2),
+                      2: const pw.FixedColumnWidth(90),
+                      3: const pw.FixedColumnWidth(100),
+                      4: const pw.FlexColumnWidth(3),
+                      5: const pw.FixedColumnWidth(90),
+                    },
+                    children: [
+                      pw.TableRow(
+                        decoration: pw.BoxDecoration(
+                          color: PdfColors.grey200,
+                          border: pw.Border(
+                            bottom: pw.BorderSide(
+                              color: PdfColors.grey600,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        children: [
+                          'No',
+                          'Nama',
+                          'Kode Perawat',
+                          'No Telpon',
+                          'Komentar',
+                          'Tanggal',
+                        ]
+                            .map((text) => pw.Container(
+                                  padding: const pw.EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 8,
+                                  ),
+                                  child: pw.Text(
+                                    text,
+                                    textAlign: pw.TextAlign.center,
+                                    style: pw.TextStyle(
+                                      fontWeight: pw.FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                      ),
+                      ...comments.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        GetViewKomentar comment = entry.value;
+
+                        return pw.TableRow(
+                          decoration: pw.BoxDecoration(
+                            color: index.isEven
+                                ? PdfColors.white
+                                : PdfColors.grey100,
+                          ),
+                          children: [
+                            pw.Container(
+                              padding: const pw.EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 8,
+                              ),
+                              child: pw.Text(
+                                '${index + 1}',
+                                textAlign: pw.TextAlign.center,
+                                style: const pw.TextStyle(fontSize: 11),
+                              ),
+                            ),
+                            pw.Container(
+                              padding: const pw.EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 8,
+                              ),
+                              child: pw.Text(
+                                comment.nama,
+                                style: const pw.TextStyle(fontSize: 11),
+                              ),
+                            ),
+                            pw.Container(
+                              padding: const pw.EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 8,
+                              ),
+                              child: pw.Text(
+                                comment.kodePerawat,
+                                style: const pw.TextStyle(fontSize: 11),
+                              ),
+                            ),
+                            pw.Container(
+                              padding: const pw.EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 8,
+                              ),
+                              child: pw.Text(
+                                comment.phone,
+                                style: const pw.TextStyle(fontSize: 11),
+                              ),
+                            ),
+                            pw.Container(
+                              padding: const pw.EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 8,
+                              ),
+                              child: pw.Text(
+                                comment.komentar,
+                                style: const pw.TextStyle(fontSize: 11),
+                              ),
+                            ),
+                            pw.Container(
+                              padding: const pw.EdgeInsets.symmetric(
+                                vertical: 8,
+                                horizontal: 8,
+                              ),
+                              child: pw.Text(
+                                formatDate(comment.tanggal),
+                                textAlign: pw.TextAlign.center,
+                                style: const pw.TextStyle(fontSize: 11),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            pw.Text(
-              'Tanggal Postingan: ${formatDate(postinganList[0].date)}',
-              style: pw.TextStyle(
-                fontSize: 16,
-                color: PdfColors.grey,
-              ),
-            ),
-            pw.Text(
-              'Tanggal Laporan: ${DateFormat('dd MMM yyyy HH:mm').format(DateTime.now())}',
-              style: pw.TextStyle(
-                fontSize: 16,
-                color: PdfColors.grey,
-              ),
-            ),
-            pw.SizedBox(height: 16), // Spasi tambahan antara header dan tabel
-            pw.Table(
-              border: pw.TableBorder.all(color: PdfColors.black, width: 0.5),
-              columnWidths: {
-                0: const pw.FixedColumnWidth(50), // No column
-                1: const pw.FlexColumnWidth(2), // nama column
-                2: const pw.FixedColumnWidth(100), // Date column
-                3: const pw.FlexColumnWidth(3), // Comment column
-              },
-              defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
-              children: [
-                // Table Header
-                pw.TableRow(
-                  decoration: const pw.BoxDecoration(color: PdfColors.grey300),
-                  children: [
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(
-                        'No',
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(
-                        'Nama',
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(
-                        'Kode Perawat',
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(
-                        'No Telpon',
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(
-                        'Komentar',
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8),
-                      child: pw.Text(
-                        'Tanggal',
-                        textAlign: pw.TextAlign.center,
-                        style: pw.TextStyle(
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                // Table Rows
-                ...comments.asMap().entries.map(
-                  (entry) {
-                    int index = entry.key;
-                    GetViewKomentar comment = entry.value;
-                    return pw.TableRow(
-                      children: [
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(
-                            '${index + 1}',
-                            textAlign: pw.TextAlign.center,
-                          ),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(
-                            comment.nama,
-                            textAlign: pw.TextAlign.left,
-                          ),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(
-                            comment.kodePerawat,
-                            textAlign: pw.TextAlign.left,
-                          ),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(
-                            comment.phone,
-                            textAlign: pw.TextAlign.left,
-                          ),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(
-                            comment.komentar,
-                            textAlign: pw.TextAlign.left,
-                          ),
-                        ),
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(
-                            formatDate(comment.tanggal),
-                            textAlign: pw.TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ],
             ),
           ],
         ),
@@ -238,7 +259,6 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
       // Open the PDF
       await OpenFile.open(file.path);
     } catch (e) {
-      // Show Error Snackbar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Gagal membuat PDF: $e'),
@@ -262,13 +282,13 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: const Color(0xFF1E1E2A),
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text(
             'Komentar Postingan',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Colors.black,
               letterSpacing: 1.2,
             ),
           ),
@@ -277,10 +297,11 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+              icon: const Icon(Icons.picture_as_pdf, color: Colors.black),
               onPressed: () async {
                 // Fetch comments and export to PDF
-                final comments = await GetViewKomentar.getViewKomentar(widget.id);
+                final comments =
+                    await GetViewKomentar.getViewKomentar(widget.id);
                 if (comments.isNotEmpty) {
                   _exportToPdf(comments);
                 } else {
@@ -361,51 +382,41 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
               final komentar = snapshot.data!;
               return ListView.builder(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 itemCount: komentar.length,
                 itemBuilder: (context, index) {
                   final item = komentar[index];
                   final userColor = _generateColorFromnama(item.nama);
 
                   return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFF2C2C3E).withOpacity(0.7),
-                          const Color(0xFF1E1E2A).withOpacity(0.9),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.1),
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 15,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
+                      color: Colors.black.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.black.withOpacity(0.3)),
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          right: -20,
+                          bottom: -20,
+                          child: Icon(
+                            Icons.comment_rounded,
+                            size: 100,
+                            color: Colors.black.withOpacity(0.05),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  // Person Icon with Unique Color
+                                  // Avatar
                                   Container(
+                                    width: 50,
+                                    height: 50,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       gradient: LinearGradient(
@@ -416,71 +427,82 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: userColor.withOpacity(0.5),
-                                          blurRadius: 10,
+                                          color: userColor.withOpacity(0.3),
+                                          blurRadius: 12,
                                           offset: const Offset(0, 4),
                                         ),
                                       ],
                                     ),
-                                    margin: const EdgeInsets.only(right: 16),
-                                    child: const CircleAvatar(
-                                      backgroundColor: Colors.transparent,
-                                      child: Icon(
-                                        Icons.person_outline,
-                                        color: Colors.white,
-                                        size: 30,
-                                      ),
+                                    child: const Icon(
+                                      Icons.person_outline,
+                                      color: Colors.black,
+                                      size: 28,
                                     ),
                                   ),
-
+                                  const SizedBox(width: 16),
+                                  // User info
                                   Expanded(
-                                    child: Text(
-                                      item.nama,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.cyan,
-                                        letterSpacing: 1.1,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Text(
-                                    item.kodePerawat,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    item.phone,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    formatDate(item.tanggal),
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item.nama,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              item.kodePerawat,
+                                              style: TextStyle(
+                                                color: Colors.black
+                                                    .withOpacity(0.6),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Text(
+                                              item.phone,
+                                              style: TextStyle(
+                                                color: Colors.black
+                                                    .withOpacity(0.6),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Text(
+                                              formatDate(item.tanggal),
+                                              style: TextStyle(
+                                                color: Colors.black
+                                                    .withOpacity(0.6),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 16),
                               Text(
                                 item.komentar,
                                 style: const TextStyle(
+                                  color: Colors.black,
                                   fontSize: 15,
-                                  color: Colors.white70,
                                   height: 1.5,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   );
                 },
