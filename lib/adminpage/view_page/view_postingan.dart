@@ -94,7 +94,7 @@ class _ViewPostinganPageState extends State<ViewPostinganPage> {
                       ),
                     ),
                   ),
-                  pw.SizedBox(height: 8),
+                  pw.SizedBox(height: 2),
                   pw.Text(
                     'Tanggal Postingan: ${formatDate(postinganList.date)}',
                     style: pw.TextStyle(

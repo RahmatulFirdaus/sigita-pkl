@@ -241,7 +241,7 @@ class GetKategori {
     return dataList.map((user) {
       return GetKategori(
         id: user['id'].toString(),
-        kategori: user['kategori'],
+        kategori: user['kategori'].toString(),
       );
     }).toList();
   }

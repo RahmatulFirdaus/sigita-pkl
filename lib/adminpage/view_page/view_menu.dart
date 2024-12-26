@@ -20,109 +20,90 @@ class ViewMenu extends StatelessWidget {
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        body: Stack(
-          children: [
-            // Background Gradient
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF6A11CB),
-                    Color(0xFF2575FC),
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Dashboard',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black.withOpacity(0.8),
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Pilih Informasi Postingan',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black.withOpacity(0.5),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
-
-            // Safe Area Content
-            SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Dashboard',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Pilih Informasi Postingan',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white70,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Glassmorphic Cards
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Download Card
-                          _buildGlassMorphicCard(
-                            context,
-                            icon: Icons.download_rounded,
-                            title: 'View Download',
-                            subtitle: 'Lihat log download',
-                            gradientColors: [
-                              const Color(0xFF00B4DB),
-                              const Color(0xFF0083B0),
-                            ],
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ViewDownload(id: postId),
-                                ),
-                              );
-                            },
-                          ),
-
-                          const SizedBox(height: 24),
-
-                          // Komentar Card
-                          _buildGlassMorphicCard(
-                            context,
-                            icon: Icons.comment_rounded,
-                            title: 'View Komentar',
-                            subtitle: 'Lihat log komentar postingan',
-                            gradientColors: [
-                              const Color(0xFFFF6B6B),
-                              const Color(0xFFFF3366),
-                            ],
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ViewPostinganPage(id: postId, judul: judul,),
-                                ),
-                              );
-                            },
-                          ),
+        
+              // Glassmorphic Cards
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Download Card
+                      _buildGlassMorphicCard(
+                        context,
+                        icon: Icons.download_rounded,
+                        title: 'View Download',
+                        subtitle: 'Lihat log download',
+                        gradientColors: [
+                          const Color(0xFF00B4DB),
+                          const Color(0xFF0083B0),
                         ],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ViewDownload(id: postId),
+                            ),
+                          );
+                        },
                       ),
-                    ),
+        
+                      const SizedBox(height: 24),
+        
+                      // Komentar Card
+                      _buildGlassMorphicCard(
+                        context,
+                        icon: Icons.comment_rounded,
+                        title: 'View Komentar',
+                        subtitle: 'Lihat log komentar postingan',
+                        gradientColors: [
+                          const Color(0xFFFF6B6B),
+                          const Color(0xFFFF3366),
+                        ],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ViewPostinganPage(id: postId, judul: judul,),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -142,10 +123,10 @@ class ViewMenu extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.black.withOpacity(0.2),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: const Color.fromARGB(255, 89, 255, 200).withOpacity(0.3),
               width: 1.5,
             ),
             gradient: LinearGradient(
@@ -155,7 +136,7 @@ class ViewMenu extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: const Color.fromARGB(255, 255, 233, 111).withOpacity(0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -176,8 +157,8 @@ class ViewMenu extends StatelessWidget {
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
                           colors: [
-                            Colors.white.withOpacity(0.3),
-                            Colors.white.withOpacity(0.1),
+                            Colors.black.withOpacity(0.3),
+                            Colors.black.withOpacity(0.1),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -200,18 +181,17 @@ class ViewMenu extends StatelessWidget {
                         children: [
                           Text(
                             title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                              color: Colors.black.withOpacity(0.8),                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             subtitle,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
-                              color: Colors.white70,
+                              color: Colors.black.withOpacity(0.5),
                             ),
                           ),
                         ],
@@ -219,9 +199,9 @@ class ViewMenu extends StatelessWidget {
                     ),
 
                     // Chevron Icon
-                    const Icon(
+                    Icon(
                       Icons.chevron_right_rounded,
-                      color: Colors.white,
+                      color: Colors.black.withOpacity(0.5),
                       size: 32,
                     ),
                   ],

@@ -21,6 +21,8 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
   List<GetPostinganAdmin> getPostingan = [];
   bool isLoading = true;
   String searchQuery = '';
+  String? selectedMonth;
+  String? selectedYear;
 
   @override
   void initState() {
@@ -48,11 +50,69 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
     }
   }
 
-  List<GetPostinganAdmin> get filteredPostingan => getPostingan
-      .where((post) =>
-          post.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          post.category.toLowerCase().contains(searchQuery.toLowerCase()))
-      .toList();
+  List<String> get yearOptions {
+    Set<String> years = {};
+    for (var post in getPostingan) {
+      String year = DateFormat('yyyy').format(DateTime.parse(post.date));
+      years.add(year);
+    }
+    List<String> sortedYears = years.toList()
+      ..sort((a, b) => b.compareTo(a)); // Sort descending
+    return sortedYears;
+  }
+
+  List<String> get monthOptions {
+    return [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+  }
+
+  List<GetPostinganAdmin> get filteredPostingan {
+    List<GetPostinganAdmin> filtered = getPostingan;
+
+    // Apply year filter
+    if (selectedYear != null) {
+      filtered = filtered.where((post) {
+        DateTime postDate = DateTime.parse(post.date);
+        String postYear = DateFormat('yyyy').format(postDate);
+        return postYear == selectedYear;
+      }).toList();
+    }
+
+    // Apply month filter
+    if (selectedMonth != null) {
+      filtered = filtered.where((post) {
+        DateTime postDate = DateTime.parse(post.date);
+        String postMonth = DateFormat('MM').format(postDate); // Format as MM
+        String selectedMonthIndex = (monthOptions.indexOf(selectedMonth!) + 1)
+            .toString()
+            .padLeft(2, '0'); // Convert to two-digit string
+        return postMonth == selectedMonthIndex;
+      }).toList();
+    }
+
+    // Apply search filter
+    if (searchQuery.isNotEmpty) {
+      filtered = filtered
+          .where((post) =>
+              post.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+              post.category.toLowerCase().contains(searchQuery.toLowerCase()))
+          .toList();
+    }
+
+    return filtered;
+  }
 
   Future<void> generatePDF() async {
     final pdf = pw.Document();
@@ -151,7 +211,7 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
                 ),
 
                 // Table Data
-                ...getPostingan.map((postingan) => pw.TableRow(
+                ...filteredPostingan.map((postingan) => pw.TableRow(
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
@@ -163,11 +223,11 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
-                          child: pw.Text(postingan.file),
+                          child: pw.Text(postingan.file ?? "-"),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
-                          child: pw.Text(postingan.content),
+                          child: pw.Text(postingan.content ?? "-"),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
@@ -176,14 +236,14 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
                           child: pw.Text(
-                            postingan.jumlahDownload.toString(),
+                            postingan.jumlahDownload?.toString() ?? "0",
                             textAlign: pw.TextAlign.center,
                           ),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
                           child: pw.Text(
-                            postingan.jumlahKomentar.toString(),
+                            postingan.jumlahKomentar?.toString() ?? "0",
                             textAlign: pw.TextAlign.center,
                           ),
                         ),
@@ -277,6 +337,73 @@ class _AdminpostinganpageState extends State<Adminpostinganpage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: DropdownButton<String>(
+                      value: selectedYear,
+                      hint: const Text('Tahun'),
+                      underline: Container(),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text('Semua Tahun'),
+                        ),
+                        ...yearOptions.map((String year) {
+                          return DropdownMenuItem<String>(
+                            value: year,
+                            child: Text(year),
+                          );
+                        }).toList(),
+                      ],
+                      onChanged: (String? value) {
+                        setState(() {
+                          selectedYear = value;
+                          // Reset month when year changes
+                          if (value == null) {
+                            selectedMonth = null;
+                          }
+                        });
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+                  // Month Filter Dropdown
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: DropdownButton<String>(
+                      value: selectedMonth,
+                      hint: const Text('Bulan'),
+                      underline: Container(),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: null,
+                          child: Text('Semua Bulan'),
+                        ),
+                        ...monthOptions.map((String month) {
+                          return DropdownMenuItem<String>(
+                            value: month,
+                            child: Text(month),
+                          );
+                        }).toList(),
+                      ],
+                      onChanged: selectedYear == null
+                          ? null // Disable month selection if no year is selected
+                          : (String? value) {
+                              setState(() {
+                                selectedMonth = value;
+                              });
+                            },
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(

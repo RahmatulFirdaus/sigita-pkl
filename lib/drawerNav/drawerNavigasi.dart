@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sigita_online/pages/login/login_page.dart';
 import 'package:sigita_online/pages/profile.dart';
 import 'package:sigita_online/pages/dashboard.dart';
 import 'package:sigita_online/models/sigitaModel.dart';
@@ -127,6 +128,24 @@ class _DrawernavigasiState extends State<Drawernavigasi> {
                   MaterialPageRoute(
                       builder: (context) => const Profilepage()));
             },
+          ),
+          Expanded(
+            child: ListTile(
+              leading: const Icon(Icons.logout_outlined,
+                  color: Colors.black),
+              title: Text(
+                "Logout",
+                style: GoogleFonts.poppins(
+                  textStyle: const TextStyle(fontSize: 14),
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginPage()));
+              },
+            ),
           ),
         ],
       ),

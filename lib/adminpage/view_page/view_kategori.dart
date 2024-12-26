@@ -62,7 +62,7 @@ class _KategoriDetailPageState extends State<KategoriDetailPage> {
         build: (pw.Context context) {
           return [
             // Header
-            pw.Center(
+            pw.Header(
               child: pw.Text(
                 'Laporan Postingan per Kategori',
                 style: pw.TextStyle(
@@ -71,6 +71,14 @@ class _KategoriDetailPageState extends State<KategoriDetailPage> {
                 ),
               ),
             ),
+            pw.SizedBox(height: 5),
+            pw.Text(
+                    'Tanggal Laporan: ${DateFormat('dd MMM yyyy HH:mm').format(DateTime.now())}',
+                    style: pw.TextStyle(
+                      fontSize: 14,
+                      color: PdfColors.grey700,
+                    ),
+                  ),
             pw.SizedBox(height: 20),
 
             // Table
@@ -293,6 +301,11 @@ class _KategoriDetailPageState extends State<KategoriDetailPage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: generatePDF,
+        child: const Icon(Icons.picture_as_pdf, color: Colors.white),
+        backgroundColor: Colors.black,
       ),
     );
   }
