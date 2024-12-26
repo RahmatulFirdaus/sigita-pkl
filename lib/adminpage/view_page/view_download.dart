@@ -140,7 +140,7 @@ class _ViewDownloadState extends State<ViewDownload> {
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8),
-                          child: pw.Text(formatDate(download.tanggal)),
+                          child: pw.Text(download.tanggal),
                         ),
                       ],
                     );
