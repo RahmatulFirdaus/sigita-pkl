@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:sigita_online/drawerNav/drawerNavigasi.dart';
 import 'package:sigita_online/models/sigitaModel.dart';
 import 'package:sigita_online/navigasi/navigasiBar.dart';
@@ -14,7 +15,8 @@ class _ProfilepageState extends State<Profilepage> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _showUpdateDialog(String userId, String field, TextEditingController controller) {
+  void _showUpdateDialog(
+      String userId, String field, TextEditingController controller) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -70,24 +72,32 @@ class _ProfilepageState extends State<Profilepage> {
                         if (field == 'Phone') {
                           responseMessage = await UpdatePhoneProfile()
                               .updatePhone(userId, controller.text);
-                        } else if (field == 'Password') {
-                          responseMessage = await UpdatePasswordProfile()
-                              .updatePassword(userId, controller.text);
-                        }
-
-                        Navigator.of(context).pop();
-
-                        if (responseMessage != null) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(responseMessage),
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                            const SnackBar(
+                              content: Text("Data berhasil diupdate"),
+                              backgroundColor: Colors.blue,
                             ),
                           );
                           setState(() {});
+                          Navigator.of(context).pop();
+                        } else if (field == 'Password') {
+                          responseMessage = await UpdatePasswordProfile()
+                              .updatePassword(userId, controller.text);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Data berhasil diupdate"),
+                              backgroundColor: Colors.blue,
+                            ),
+                          );
+                          setState(() {});
+                          Navigator.of(context).pop();
+                        }else{
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text("Terjadi Kesalahan"),
+                              backgroundColor: Colors.red.withOpacity(0.8),
+                            ),
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -185,7 +195,7 @@ class _ProfilepageState extends State<Profilepage> {
                               color: Colors.grey[600],
                             ),
                           ),
-                          SizedBox(height: 8),  
+                          const SizedBox(height: 8),
                           Text(
                             user.nama,
                             style: const TextStyle(

@@ -50,7 +50,6 @@ class _UpdatePostinganState extends State<UpdatePostingan> {
         fileController.text = user.file.toString();
         deskripsiController.text = user.content.toString();
         tanggalController.text = user.date.toString();
-        idKategori = user.idKategori.toString();
       });
     } catch (e) {
       print(e);
@@ -59,7 +58,7 @@ class _UpdatePostinganState extends State<UpdatePostingan> {
 
   void fetchPostinganDetail(String id) async {
     final response = await http.get(
-      Uri.parse("http://4h8dxjh2-3000.asse.devtunnels.ms/api/getPostinganDetail/$id"),
+      Uri.parse("http://b60a-125-164-96-28.ngrok-free.app/api/getPostinganDetail/$id"),
     );
 
     if (response.statusCode == 200) {
@@ -68,7 +67,6 @@ class _UpdatePostinganState extends State<UpdatePostingan> {
         judulController.text = data['judul'] ?? '';
         deskripsiController.text = data['deskripsi'] ?? '';
         tanggalController.text = data['tanggal'] ?? '';
-        idKategori = data['id_kategori'] ?? '';
         fileController.text = data['file'] ?? '';
       });
     } else {
@@ -99,7 +97,7 @@ class _UpdatePostinganState extends State<UpdatePostingan> {
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2025),
+      lastDate: DateTime(2030),
     );
 
     if (pickedDate != null) {
@@ -131,7 +129,7 @@ class _UpdatePostinganState extends State<UpdatePostingan> {
   required String deskripsi,
   required String tanggal,
 }) async {
-  var uri = Uri.parse("http://4h8dxjh2-3000.asse.devtunnels.ms/api/updatePostingan/$id");
+  var uri = Uri.parse("https://b60a-125-164-96-28.ngrok-free.app/api/updatePostingan/$id");
   var request = http.MultipartRequest('PATCH', uri);
 
   if (_file != null) {

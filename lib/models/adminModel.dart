@@ -18,7 +18,7 @@ class GetPostinganKategoriDetail{
   });
 
   static Future<List<GetPostinganKategoriDetail>> getPostinganKategoriDetail(String id) async{
-    var url = Uri.parse("http://4h8dxjh2-3000.asse.devtunnels.ms/api/getPostinganKategoriDetail/$id");
+    var url = Uri.parse("http://b60a-125-164-96-28.ngrok-free.app/api/getPostinganKategoriDetail/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var dataList = jsonData["data"] as List;
@@ -44,7 +44,7 @@ class GetViewDownload{
   GetViewDownload({required this.nama, required this.tanggal, required this.kodePerawat, required this.phone});
 
   static Future<List<GetViewDownload>> getViewDownload(String id) async{
-    var url = Uri.parse("http://4h8dxjh2-3000.asse.devtunnels.ms/api/getViewDownload/$id");
+    var url = Uri.parse("http://b60a-125-164-96-28.ngrok-free.app/api/getViewDownload/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var dataList = jsonData["data"] as List;
@@ -65,7 +65,7 @@ class GetViewKomentar{
   GetViewKomentar({required this.nama, required this.komentar, required this.tanggal, required this.kodePerawat, required this.phone});
 
   static Future<List<GetViewKomentar>> getViewKomentar(String id) async{
-    Uri url = Uri.parse("http://4h8dxjh2-3000.asse.devtunnels.ms/api/getViewKomentar/$id");
+    Uri url = Uri.parse("http://b60a-125-164-96-28.ngrok-free.app/api/getViewKomentar/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var dataList = jsonData["data"] as List;
@@ -85,7 +85,7 @@ class DeleteAccountAdmin{
   String id;
   DeleteAccountAdmin({required this.id});
   static Future<DeleteAccountAdmin> deleteAccountAdmin(String id) async{
-    Uri url = Uri.parse("https://4h8dxjh2-3000.asse.devtunnels.ms/api/deleteAkun/$id");
+    Uri url = Uri.parse("https://b60a-125-164-96-28.ngrok-free.app/api/deleteAkun/$id");
     var hasilResponse = await http.delete(url);
     var jsonData = jsonDecode(hasilResponse.body);
     return DeleteAccountAdmin(id: jsonData['id'].toString());
@@ -98,7 +98,7 @@ class GetAccountAdminDetail{
   GetAccountAdminDetail({required this.username, required this.password, required this.role, required this.phone, required this.nama, required this.kodePerawat, required this.id});
 
   static Future<GetAccountAdminDetail> getAccountAdminDetail(String id) async{
-    Uri url = Uri.parse("http://4h8dxjh2-3000.asse.devtunnels.ms/api/getAccountAdminDetail/$id");
+    Uri url = Uri.parse("http://b60a-125-164-96-28.ngrok-free.app/api/getAccountAdminDetail/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var user = jsonData["data"][0];
@@ -120,7 +120,7 @@ class UpdateAccount{
   UpdateAccount({required this.username, required this.password, required this.role, required this.phone, required this.nama, required this.kodePerawat});
 
   static Future<UpdateAccount> updateAccount(String username, password, role, phone, nama, kodePerawat, id) async{
-    Uri url = Uri.parse("https://4h8dxjh2-3000.asse.devtunnels.ms/api/updateAkun/$id");
+    Uri url = Uri.parse("https://b60a-125-164-96-28.ngrok-free.app/api/updateAkun/$id");
     var hasilResponse = await http.patch(url, 
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({
@@ -129,7 +129,7 @@ class UpdateAccount{
       "role": role, 
       "phone": phone, 
       "nama": nama, 
-      "kodePerawat": kodePerawat
+      "kode_perawat": kodePerawat
     }));
     var jsonData = jsonDecode(hasilResponse.body);
     return UpdateAccount(
@@ -150,7 +150,7 @@ class PostAccount{
   PostAccount({required this.username, required this.password, required this.role, required this.phone, required this.nama, required this.kodePerawat});
 
   static Future<PostAccount> postAccount(String username, password, role, phone, nama, kodePerawat) async{
-    Uri url = Uri.parse("https://4h8dxjh2-3000.asse.devtunnels.ms/api/postAkun");
+    Uri url = Uri.parse("https://b60a-125-164-96-28.ngrok-free.app/api/postAkun");
     var hasilResponse = await http.post(url, 
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({
@@ -159,7 +159,7 @@ class PostAccount{
       "role": role,
       "phone": phone,
       "nama": nama,
-      "kodePerawat": kodePerawat
+      "kode_perawat": kodePerawat
     }));
     var jsonData = jsonDecode(hasilResponse.body);
     return PostAccount(
@@ -179,7 +179,7 @@ class GetAccount{
   GetAccount({required this.username, required this.password, required this.role, required this.phone, required this.nama, required this.kodePerawat, required this.id});
 
   static Future<List<GetAccount>> getAccount() async {
-    Uri url = Uri.parse("http://4h8dxjh2-3000.asse.devtunnels.ms/api/getAccountAdmin");
+    Uri url = Uri.parse("http://b60a-125-164-96-28.ngrok-free.app/api/getAccountAdmin");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var dataList = jsonData["data"] as List;
@@ -220,7 +220,7 @@ class GetTotalPostingan {
 
   static Future<List<GetTotalPostingan>> getTotalPostingan() async {
     Uri url = Uri.parse(
-        "http://4h8dxjh2-3000.asse.devtunnels.ms/api/getTotalPostinganDownloadKomentar");
+        "http://b60a-125-164-96-28.ngrok-free.app/api/getTotalPostinganDownloadKomentar");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var dataList = jsonData["data"] as List;
@@ -255,7 +255,7 @@ class GetPostinganAdmin {
   });
 
   static Future<List<GetPostinganAdmin>> getPostinganAdmin() async {
-    Uri url = Uri.parse("http://4h8dxjh2-3000.asse.devtunnels.ms/api/getPostinganAdmin");
+    Uri url = Uri.parse("http://b60a-125-164-96-28.ngrok-free.app/api/getPostinganAdmin");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var dataList = jsonData["data"] as List;
@@ -284,7 +284,7 @@ class GetKategoriAdmin {
   });
 
   static Future<List<GetKategoriAdmin>> getKategoriAdmin() async {
-    Uri url = Uri.parse("http://4h8dxjh2-3000.asse.devtunnels.ms/api/getKategoriAdmin");
+    Uri url = Uri.parse("http://b60a-125-164-96-28.ngrok-free.app/api/getKategoriAdmin");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var dataList = jsonData["data"] as List;
@@ -309,7 +309,7 @@ class UpdatePostinganAdmin {
 
   static Future<UpdatePostinganAdmin> updatePostinganAdmin(
       String id, String judul, String file, String deskripsi) async {
-    Uri url = Uri.parse("https://4h8dxjh2-3000.asse.devtunnels.ms/api/updatePostingan/$id");
+    Uri url = Uri.parse("https://b60a-125-164-96-28.ngrok-free.app/api/updatePostingan/$id");
     var hasilResponse = await http.patch(url, body: {
       "judul": judul,
       "file": file,
@@ -330,7 +330,7 @@ class UpdateKategoriAdmin {
 
   static Future<UpdateKategoriAdmin> updateKategoriAdmin(
       String id, String kategori) async {
-    Uri url = Uri.parse("https://4h8dxjh2-3000.asse.devtunnels.ms/api/updateKategori/$id");
+    Uri url = Uri.parse("https://b60a-125-164-96-28.ngrok-free.app/api/updateKategori/$id");
     var hasilResponse = await http.patch(url, body: {"kategori": kategori});
     var jsonData = jsonDecode(hasilResponse.body);
     return UpdateKategoriAdmin(kategori: jsonData['kategori'].toString());
@@ -345,7 +345,7 @@ class DeletePostinganAdmin {
   });
 
   static Future<DeletePostinganAdmin> deletePostinganAdmin(String id) async {
-    Uri url = Uri.parse("https://4h8dxjh2-3000.asse.devtunnels.ms/api/deletePostingan/$id");
+    Uri url = Uri.parse("https://b60a-125-164-96-28.ngrok-free.app/api/deletePostingan/$id");
     var hasilResponse = await http.delete(url);
     var jsonData = jsonDecode(hasilResponse.body);
     return DeletePostinganAdmin(id: jsonData['id'].toString());
@@ -360,7 +360,7 @@ class DeleteKategoriAdmin {
   });
 
   static Future<DeleteKategoriAdmin> deleteKategoriAdmin(String id) async {
-    Uri url = Uri.parse("https://4h8dxjh2-3000.asse.devtunnels.ms/api/deleteKategori/$id");
+    Uri url = Uri.parse("https://b60a-125-164-96-28.ngrok-free.app/api/deleteKategori/$id");
     var hasilResponse = await http.delete(url);
     var jsonData = jsonDecode(hasilResponse.body);
     return DeleteKategoriAdmin(id: jsonData['id'].toString());
@@ -381,7 +381,7 @@ class PostPostinganAdmin {
 
   static Future<PostPostinganAdmin> postPostinganAdmin(String idKategori,
       String judul, String file, String deskripsi, String tanggal) async {
-    Uri url = Uri.parse("https://4h8dxjh2-3000.asse.devtunnels.ms/api/uploadFileAdmin");
+    Uri url = Uri.parse("https://b60a-125-164-96-28.ngrok-free.app/api/uploadFileAdmin");
     var hasilResponse = await http.post(url, body: {
       "id_kategori": idKategori,
       "judul": judul,
@@ -407,7 +407,7 @@ class PostKategoriAdmin {
 
   static Future<PostKategoriAdmin> postKategoriAdmin(
       String namaKategori) async {
-    Uri url = Uri.parse("https://4h8dxjh2-3000.asse.devtunnels.ms/api/postKategoriAdmin");
+    Uri url = Uri.parse("https://b60a-125-164-96-28.ngrok-free.app/api/postKategoriAdmin");
     var hasilResponse = await http.post(url, body: {"kategori": namaKategori});
     var jsonData = jsonDecode(hasilResponse.body);
     return PostKategoriAdmin(namaKategori: jsonData['kategori'].toString());
@@ -421,7 +421,7 @@ class GetKategoriAdminDetail {
 
   static Future<GetKategoriAdminDetail> getKategoriAdminDetail(
       String id) async {
-    Uri url = Uri.parse("http://4h8dxjh2-3000.asse.devtunnels.ms/api/getKategoriDetail/$id");
+    Uri url = Uri.parse("http://b60a-125-164-96-28.ngrok-free.app/api/getKategoriDetail/$id");
     var hasilResponse = await http.get(url);
     var jsonData = jsonDecode(hasilResponse.body);
     var user = jsonData["data"][0];

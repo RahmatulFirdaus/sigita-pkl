@@ -66,7 +66,7 @@ class _AddPostinganState extends State<AddPostingan> {
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2025),
+      lastDate: DateTime(2030),
     );
 
     if (pickedDate != null) {
@@ -102,7 +102,8 @@ class _AddPostinganState extends State<AddPostingan> {
   }) async {
     if (_file == null) return;
 
-    var uri = Uri.parse("http://4h8dxjh2-3000.asse.devtunnels.ms/api/uploadFileAdmin");
+    var uri = Uri.parse(
+        "https://b60a-125-164-96-28.ngrok-free.app/api/uploadFileAdmin");
     var request = http.MultipartRequest('POST', uri);
 
     // Tambahkan file ke dalam request
@@ -282,6 +283,36 @@ class _AddPostinganState extends State<AddPostingan> {
                       child: ElevatedButton(
                         onPressed: () async {
                           try {
+                            if (judulController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Judul tidak boleh kosong')),
+                              );
+                              return;
+                            }
+                            if (fileController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('File tidak boleh kosong')),
+                              );
+                              return;
+                            }
+                            if (deskripsiController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Deskripsi tidak boleh kosong')),
+                              );
+                              return;
+                            }
+                            if (tanggalController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Tanggal tidak boleh kosong')),
+                              );
+                              return;
+                            }
                             await uploadFileWithFormData(
                               id_kategori: idKategori!,
                               judul: judulController.text,

@@ -63,7 +63,7 @@
         toastification.show(
           context: context,
           title: const Text("Terjadi Kesalahan"),
-          description: const Text("Gagal menambahkan akun"),
+          description: Text("Gagal menambahkan akun : $e"),
           type: ToastificationType.error,
           style: ToastificationStyle.flat,
           alignment: Alignment.topCenter,
