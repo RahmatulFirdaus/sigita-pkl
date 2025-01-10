@@ -385,7 +385,7 @@ class MyDataSource extends DataTableSource {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => KategoriDetailPage(categoryId: kategori.id),
+                      builder: (context) => KategoriDetailPage(categoryId: kategori.id, judul: kategori.kategori,),
                     ),
                   );
                 },

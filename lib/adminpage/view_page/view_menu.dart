@@ -71,7 +71,7 @@ class ViewMenu extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ViewDownload(id: postId),
+                              builder: (context) => ViewDownload(id: postId, judul: judul,),
                             ),
                           );
                         },

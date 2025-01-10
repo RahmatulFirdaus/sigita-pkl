@@ -12,8 +12,8 @@ import 'package:intl/intl.dart';
 import 'package:sigita_online/models/adminModel.dart'; // Adjust import as needed
 
 class ViewDownload extends StatefulWidget {
-  final String id;
-  const ViewDownload({super.key, required this.id});
+  final String id, judul;
+  const ViewDownload({super.key, required this.id, required this.judul});
 
   @override
   State<ViewDownload> createState() => _ViewDownloadState();
@@ -56,7 +56,7 @@ class _ViewDownloadState extends State<ViewDownload> {
             pw.Header(
               level: 0,
               child: pw.Text(
-                'Riwayat Download',
+                'Riwayat Download ${widget.judul}',
                 style: pw.TextStyle(
                   fontSize: 24,
                   fontWeight: pw.FontWeight.bold,

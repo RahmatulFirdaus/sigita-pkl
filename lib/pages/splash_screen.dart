@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:sigita_online/pages/dashboard.dart';
+import 'package:sigita_online/pages/login/login_page.dart';
 
 class OpeningSplashScreen extends StatefulWidget {
   const OpeningSplashScreen({super.key});
@@ -18,7 +19,7 @@ class _OpeningSplashScreenState extends State<OpeningSplashScreen> {
     Timer(const Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) =>
-              const DashboardPage())); // Ganti dengan halaman utama Anda
+              const LoginPage())); // Ganti dengan halaman utama Anda
     });
   }
 

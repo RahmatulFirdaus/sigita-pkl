@@ -11,9 +11,9 @@ import 'package:open_file/open_file.dart';
 
 
 class KategoriDetailPage extends StatefulWidget {
-  final String categoryId;
+  final String categoryId, judul;
 
-  const KategoriDetailPage({Key? key, required this.categoryId}) : super(key: key);
+  const KategoriDetailPage({Key? key, required this.categoryId, required this.judul}) : super(key: key);
 
   @override
   State<KategoriDetailPage> createState() => _KategoriDetailPageState();
@@ -64,7 +64,7 @@ class _KategoriDetailPageState extends State<KategoriDetailPage> {
             // Header
             pw.Header(
               child: pw.Text(
-                'Laporan Postingan per Kategori',
+                'Laporan Postingan per Kategori ${widget.judul}',
                 style: pw.TextStyle(
                   fontSize: 16,
                   fontWeight: pw.FontWeight.bold,

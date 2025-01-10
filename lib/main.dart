@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sigita_online/pages/openingSplashScreen.dart';
+import 'package:sigita_online/pages/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());

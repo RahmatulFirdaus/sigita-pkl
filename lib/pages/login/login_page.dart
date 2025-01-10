@@ -63,6 +63,25 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         // Logo or app name could go here
                         Container(
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                "assets/images/logo.png",
+                                width: 100,
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                "SIGITA\nModul Keperawatan",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ]
+                          ),
+                        ),
+                        Container(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           child: const Text(
                             "Login",
