@@ -59,7 +59,7 @@ class _UpdatePostinganState extends State<UpdatePostingan> {
 
   void fetchPostinganDetail(String id) async {
     final response = await http.get(
-      Uri.parse("http://192.168.1.80:3000/api/getPostinganDetail/$id"),
+      Uri.parse("http://q58r9qrs-3000.asse.devtunnels.ms/api/getPostinganDetail/$id"),
     );
 
     if (response.statusCode == 200) {
@@ -131,7 +131,7 @@ class _UpdatePostinganState extends State<UpdatePostingan> {
   required String deskripsi,
   required String tanggal,
 }) async {
-  var uri = Uri.parse("http://192.168.1.80:3000/api/updatePostingan/$id");
+  var uri = Uri.parse("http://q58r9qrs-3000.asse.devtunnels.ms/api/updatePostingan/$id");
   var request = http.MultipartRequest('PATCH', uri);
 
   if (_file != null) {

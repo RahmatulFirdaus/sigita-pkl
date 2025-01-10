@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Container(
                     height: MediaQuery.of(context).size.height,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,

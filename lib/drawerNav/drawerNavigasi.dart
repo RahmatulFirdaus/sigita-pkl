@@ -129,23 +129,21 @@ class _DrawernavigasiState extends State<Drawernavigasi> {
                       builder: (context) => const Profilepage()));
             },
           ),
-          Expanded(
-            child: ListTile(
-              leading: const Icon(Icons.logout_outlined,
-                  color: Colors.black),
-              title: Text(
-                "Logout",
-                style: GoogleFonts.poppins(
-                  textStyle: const TextStyle(fontSize: 14),
-                ),
+          ListTile(
+            leading: const Icon(Icons.logout_outlined,
+                color: Colors.black),
+            title: Text(
+              "Logout",
+              style: GoogleFonts.poppins(
+                textStyle: const TextStyle(fontSize: 14),
               ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginPage()));
-              },
             ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const LoginPage()));
+            },
           ),
         ],
       ),
